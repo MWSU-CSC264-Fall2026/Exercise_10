@@ -1,4 +1,3 @@
-# exercise-10 starter code
 
 .data
 result1: .word -1
@@ -20,26 +19,26 @@ done:   .asciiz "Even Sum Exercise Complete!\n"
 .globl main
 main:
 
-    # TODO: Call sum_even for array1.
-    # Put the address of array1 in a0.
-    # Put the length of array1 in a1.
-    # Store the returned value in result1.
+    # Call sum_even for array1
+    la a0, array1
+    lw a1, len1
+    jal ra, sum_even
+    la t0, result1
+    sw a0, 0(t0)
 
+    # Call sum_even for array2
+    la a0, array2
+    lw a1, len2
+    jal ra, sum_even
+    la t0, result2
+    sw a0, 0(t0)
 
-
-    # TODO: Call sum_even for array2.
-    # Put the address of array2 in a0.
-    # Put the length of array2 in a1.
-    # Store the returned value in result2.
-
-
-
-    # TODO: Call sum_even for array3.
-    # Put the address of array3 in a0.
-    # Put the length of array3 in a1.
-    # Store the returned value in result3.
-
-
+    # Call sum_even for array3
+    la a0, array3
+    lw a1, len3
+    jal ra, sum_even
+    la t0, result3
+    sw a0, 0(t0)
 
     # Print completion message
     la a1, done
@@ -50,20 +49,27 @@ main:
     li a0, 10
     ecall
 
-
-# TODO: Implement sum_even.
-#
-# Arguments:
-#   a0 = address of array
-#   a1 = number of elements
-#
-# Returns:
-#   a0 = sum of all even integers in the array
-#
-# Notes:
-#   - Use a loop to examine each element.
-#   - Use base+offset addressing to access array elements.
-#   - Add only even values.
-#   - You may use t registers freely.
-#   - If you use s registers, save and restore them.
+# sum_even subroutine
 sum_even:
+    li t0, 0       # index
+    li t1, 0       # sum
+
+loop:
+    bge t0, a1, finished
+
+    slli t2, t0, 2
+    add t2, a0, t2
+    lw t3, 0(t2)
+
+    andi t4, t3, 1
+    bnez t4, skip
+
+    add t1, t1, t3
+
+skip:
+    addi t0, t0, 1
+    j loop
+
+finished:
+    mv a0, t1
+    ret
